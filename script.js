@@ -109,7 +109,7 @@ function watch(ckType){
 }
 
 window.onload = async function(){
-    res = await fetch('http://127.0.0.1:5000/genres').then(response => response.json());
+    res = await fetch('https://hiepvo01.pythonanywhere.com/genres').then(response => response.json());
     select.genres = res.genres;  
     year = []
     for (i = 2000; i < parseInt(d.getFullYear()); i++) {

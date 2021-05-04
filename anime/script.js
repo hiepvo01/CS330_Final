@@ -39,7 +39,7 @@ async function display() {
         button.innerText = e
         button.style.margin = 2
         button.onclick = async function() {
-            let url = 'http://127.0.0.1:5000/episodes'
+            let url = 'https://hiepvo01.pythonanywhere.com/episodes'
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == XMLHttpRequest.DONE) {
