@@ -1,13 +1,152 @@
 <html>
   <head>
     <link rel="stylesheet" href="../static/css/bootstrap.min.css" crossorigin="anonymous">
-    <link rel="stylesheet" href="../static/css/bootstrap.min.css.map" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css" crossorigin="anonymous">
     <script src="../static/js/bootstrap.bundle.min.js"></script>
-    <script src="../static/js/bootstrap.bundle.min.js.map"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
   </head>
   <body>
-    
-    <div class="video-embed clearfix"><iframe src="https://www.crunchyroll.com/affiliate_iframeplayer?aff=af-12299-plwa&media_id=510096&video_format=106&video_quality=60&auto_play=0" width="800" height="535" allowfullscreen allow="encrypted-media"></iframe></div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Dropdown
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+              </ul>
+            </li>
+          </ul>
+          <form class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+    </nav>
+    <div id="filter">
+      <div class="container">
+        <div class= 'row filters'>
+          <div class="dropdown col-2">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              Genre
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li v-for="g in genres" class='dropdown-item'>
+                <input class="form-check-input" name="filter_genre" @change="onChangeGenre($event)" type="checkbox" :value="g" :id="g">
+                <label class="form-check-label" for="flexCheckDefault">
+                  {{ g }}
+                </label>
+              </li>
+            </ul>
+          </div>
 
-  </body>
+          <div class="dropdown col-2">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              Type
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li v-for="t in types" class='dropdown-item'>
+                <input class="form-check-input" name="filter_type" onClick="ckChange(this)" type="checkbox" :value="t" :id="t">
+                <label class="form-check-label" for="flexCheckDefault">
+                  {{ t }}
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <div class="dropdown col-2">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              Status
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li v-for="s in statuses" class='dropdown-item'>
+                <input class="form-check-input" name="filter_status" onClick="ckChange(this)" type="checkbox" :value="s" :id="s">
+                <label class="form-check-label" for="flexCheckDefault">
+                  {{ s }}
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <div class="dropdown col-2">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              Year
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li v-for="y in years" class='dropdown-item'>
+                <input class="form-check-input" name="filter_year" onClick="ckChange(this)" type="checkbox" :value="y" :id="y">
+                <label class="form-check-label" for="flexCheckDefault">
+                  {{ y }}
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <div class="dropdown col-2">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              Rated
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li v-for="r in rates" class='dropdown-item'>
+                <input class="form-check-input" name="filter_rate" onClick="ckChange(this)" type="checkbox" :value="r" :id="r">
+                <label class="form-check-label" for="flexCheckDefault">
+                  {{ r }}
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-2">
+            <!-- <form id="form_filter" style="height:0px"> -->
+              <button class="btn btn-primary" id="submit_filter" @click="filter_data($event)">Filter</button>
+            <!-- </form> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class='container'>
+      <div class='row'>
+        <div id="filter-grid" class="container"> 
+          <hr>
+          <div class="row">
+              <div v-for="a in animes" class="col-2">
+                  <div class="card card-dark">
+                      <div class="card-body">
+                        <img :src="a.image_url" class='image' width="100%" height="150">
+                        <div class="middle">
+                          <button class="btn btn-primary" :id="a.mal_id" onClick="watch(this)">Watch</button>
+                        </div>
+                        <div class="anime-head" style="height:50px;">
+                          <h6 class="card-title">{{a.title}}</h6>
+                        </div>
+                          <!-- <a href="#" class="btn btn-outline-secondary">Outline</a> -->
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="script.js"></script>
+</body>
 </html>
