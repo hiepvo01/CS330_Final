@@ -13,7 +13,7 @@ app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'animes.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = os.environ.get("SECRET_KEY")
+app.config['JWT_SECRET_KEY'] = 'sfdsdfsdfsdfwefwefa'
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)

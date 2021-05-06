@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from flask import jsonify, request, Response
 from config import app, db, user_schema, users_schema, User
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import datetime
 import json
 from sqlalchemy.sql import func
@@ -9,10 +9,11 @@ import requests
 from bs4 import BeautifulSoup
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 
-CORS(app)
+CORS(app, support_credentials=True)
 GENRE_URL = "https://myanimelist.net/anime.php"
 
 @app.route('/')
+@cross_origin(supports_credentials=True)
 def hello():
     return jsonify(message="hello there im anime app")
 
@@ -23,6 +24,7 @@ def hello():
 #     return result
 
 @app.route('/user/<email>', methods=['GET'])
+@cross_origin(supports_credentials=True)
 @jwt_required()
 def user_detail(email: str):
     user = User.query.filter_by(email=email).first()
@@ -33,6 +35,7 @@ def user_detail(email: str):
         return jsonify(message="That user does not exist"), 404
 
 @app.route('/update_preference/<email>/<anime_id>/<choice>', methods=['PUT'])
+@cross_origin(supports_credentials=True)
 @jwt_required()
 def update_preference(email, anime_id, choice):
     print(choice)
@@ -78,6 +81,7 @@ def update_preference(email, anime_id, choice):
 
 
 @app.route('/register', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def register():
     email = request.form['email']
     test = User.query.filter_by(email=email).first()
@@ -96,6 +100,7 @@ def register():
         return res
 
 @app.route('/login', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def login():
     if request.is_json:
         email = request.json['email']
@@ -117,6 +122,7 @@ def login():
         return res
 
 @app.route('/genres')
+@cross_origin(supports_credentials=True)
 def genres():
     genres = []
     resp = requests.get(GENRE_URL)
@@ -137,6 +143,7 @@ def genres():
     return res
 
 @app.route('/episodes', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def episodes():
     content = request.json
     epurl = content['anime_url']
