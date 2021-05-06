@@ -5,16 +5,19 @@ import os
 import datetime
 from flask_marshmallow import Marshmallow
 import pandas as pd
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 
 """App Config"""
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'rides.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'animes.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = os.environ.get("SECRET_KEY")
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+jwt = JWTManager(app)
 
 """App Database"""
 
@@ -28,32 +31,20 @@ def db_drop():
     db.drop_all()
     print('Databases dropped')
 
-# @app.cli.command('db_seed')
-# def db_seed():
-#     jon = Order(purchaser = "Jon",
-#                 date = datetime.date(2020, 3, 20),
-#                 merchant = 'Fareway',
-#                 denomination = 5,
-#                 quantity = 10,
-#                 amount = 10*5,
-#                 discretion = 10*5*0.01,
-#                 target = "Student Eric",
-#                 order = 1)
+@app.cli.command('db_seed')
+def db_seed():
+    hiep = User(name = "Hiep",
+                gender = "Male",
+                email = "vohi01@luther.edu",
+                password = "Bangfish0911",
+                watching = '5114, 11061',
+                watched = '28977',
+                like = '36838, 2904'
+                )
 
-#     hiep = Order(purchaser = "Hiep",
-#                 date = datetime.date(2021, 4, 14),
-#                 merchant = 'Casey',
-#                 denomination = 10,
-#                 quantity = 15,
-#                 amount = 10*15,
-#                 discretion = 10*15*0.01,
-#                 target = "General Fund",
-#                 order = 2)
-
-#     db.session.add(jon)
-#     db.session.add(hiep)
-#     db.session.commit()
-#     print('Databases seeded')
+    db.session.add(hiep)
+    db.session.commit()
+    print('Databases seeded')
 
 """Database Models"""
 
@@ -62,12 +53,15 @@ class User(db.Model):
     id = Column(Integer, primary_key = True)
     name = Column(String)
     gender = Column(String)
-    phone = Column(Integer)
     email = Column(String, unique=True)
+    password = Column(String)
+    watching = Column(String)
+    watched = Column(String)
+    like = Column(String)
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name', 'gender', 'phone', 'email')
+        fields = ('id', 'name', 'gender', 'email', 'password', 'watching', 'watched', 'like')
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
