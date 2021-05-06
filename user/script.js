@@ -4,11 +4,29 @@ async function Search(){
     window.location.replace("../index.html");
 }
 
+var test = new XMLHttpRequest();
+    test.onreadystatechange= function () {
+        if (test.readyState==4) {
+            //handle response
+            if(test.status==401) {
+                alert("Session Timeout! Please log in again");
+                location.href="../user/login.html"
+            } else {
+            }
+        }
+        if (test.readyState == XMLHttpRequest.DONE) {
+            localStorage.setItem('watching', JSON.parse(test.responseText)["watching"])
+            localStorage.setItem('watched', JSON.parse(test.responseText)["watched"])
+            localStorage.setItem('like', JSON.parse(test.responseText)["like"])
+            localStorage.setItem('name', JSON.parse(test.responseText)["name"])
+        }
+    }
+
 async function Login(){
     email = document.getElementById('email').value
     password = document.getElementById('password').value
 
-    let url = 'https://hiepvo01.pythonanywhere.com//login'
+    let url = 'https://hiepvo01.pythonanywhere.com/login'
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (document.getElementById('login-alert')) {
@@ -32,7 +50,15 @@ async function Login(){
 
             if (JSON.parse(xhr.responseText).message == 'Login Successful') {
                 localStorage.setItem('access_token', JSON.parse(xhr.responseText).access_token);
-                location.href = '../index.html';
+        
+                if(localStorage.getItem('access_token')) {
+                    console.log('he;p')
+                    test.open("GET", "https://hiepvo01.pythonanywhere.com/user/" + localStorage.getItem('email'), true);
+                    test.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
+                    test.setRequestHeader("Accept","text/plain");
+                    test.send()
+                }
+
             }
         }
     }
@@ -42,4 +68,6 @@ async function Login(){
         email: email,
         password: password
     }));
+
+    
 }

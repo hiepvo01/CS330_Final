@@ -9,7 +9,6 @@ const anime_data = new Vue({
 });
 
 async function display() {
-    console.log("Testing")
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     if(urlParams.get('id')) {
@@ -29,8 +28,6 @@ async function display() {
         star = stars[i];
         star.classList.add("checked");
     }
-
-    console.log(anime_data.anime.url)
 
     for(let e =1; e<=anime_data.anime.episodes;e++){
         div = document.getElementById('episode_buttons')
@@ -90,7 +87,6 @@ var user = new XMLHttpRequest();
                 alert("Session Timeout! Please log in again");
                 location.href="../user/login.html"
             } else {
-                console.log(user.responseText)
             }
         }
         if (user.readyState == XMLHttpRequest.DONE) {
@@ -101,14 +97,13 @@ var user = new XMLHttpRequest();
     }
 
 function updateUser(key) {    
-    var method = document.getElementById(key.id).value;
-    let updateUrl = 'https://hiepvo01.pythonanywhere.com/update_preference/'+localStorage.getItem('email')+'/'+localStorage.getItem('anime_id')+'/'+method 
-    user.open("PUT", updateUrl, true);
+    var method = key.id;
+    let updateUrl = 'https://hiepvo01.pythonanywhere.com/update_preference'
+    user.open("POST", updateUrl, true);
     user.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
-    user.setRequestHeader("Accept","text/plain");
-    user.setRequestHeader("Access-Control-Allow-Origin","*");
-    
-    user.send()
+    user.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    // user.setRequestHeader("Access-Control-Allow-Origin","*");
+    user.send(JSON.stringify({"email":localStorage.getItem('email'), "anime_id":localStorage.getItem('anime_id'), "choice":method}))
 }
 
 window.onload= async function() {
