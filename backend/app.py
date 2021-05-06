@@ -90,7 +90,10 @@ def register():
         user = User(email=email, name=name, gender=gender, password=password, watching='', watched='', like='')
         db.session.add(user)
         db.session.commit()
-        return jsonify(message='User created successfully'), 201
+        res = Response(json.dumps({"message": "User Created Successfully"}))
+        res.headers["Access-Control-Allow-Origin"] = "*"
+        res.headers["Content-Type"] = "application/json"
+        return res
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -103,9 +106,15 @@ def login():
     test = User.query.filter_by(email=email, password=password).first()
     if test:
         access_token = create_access_token(identity=email)
-        return jsonify(message="Login Successful", access_token=access_token)
+        res = Response(json.dumps({"message": "Login Successful", "access_token": access_token}))
+        res.headers["Access-Control-Allow-Origin"] = "*"
+        res.headers["Content-Type"] = "application/json"
+        return res
     else:
-        return jsonify(message="Bad Email or Password")
+        res = Response(json.dumps({"message": "Bad Email or Password"}))
+        res.headers["Access-Control-Allow-Origin"] = "*"
+        res.headers["Content-Type"] = "application/json"
+        return res
 
 @app.route('/genres')
 def genres():
@@ -122,7 +131,10 @@ def genres():
         g = g.replace('\n', '')
         genres.append(g)
     genres.sort()
-    return jsonify(genres=genres)
+    res = Response(json.dumps({"genres": genres}))
+    res.headers["Access-Control-Allow-Origin"] = "*"
+    res.headers["Content-Type"] = "application/json"
+    return res
 
 @app.route('/episodes', methods=['POST'])
 def episodes():
