@@ -41,7 +41,6 @@ def update_preference():
     email = request.json['email']
     anime_id = request.json['anime_id']
     choice = request.json['choice']
-    print(choice)
     user = User.query.filter_by(email=email).first()
     if user:
         pref = {
@@ -71,7 +70,6 @@ def update_preference():
         user.like = ', '.join(pref['like'])
         
         db.session.commit()
-        print(user.watched)
         res = Response(json.dumps({"message": "You updated your preference", 'watching': user.watching, 'watched':user.watched, 'like':user.like})) 
         
         res.headers["Content-Type"] = "application/json"
@@ -87,6 +85,7 @@ def update_preference():
 @cross_origin(supports_credentials=True)
 def register():
     email = request.form['email']
+    name = request.form['name']
     test = User.query.filter_by(email=email).first()
     if test:
         return jsonify(message='That email already exists'), 409
