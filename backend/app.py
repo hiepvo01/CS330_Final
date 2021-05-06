@@ -34,10 +34,13 @@ def user_detail(email: str):
     else:
         return jsonify(message="That user does not exist"), 404
 
-@app.route('/update_preference/<email>/<anime_id>/<choice>', methods=['PUT'])
+@app.route('/update_preference', methods=['POST'])
 @cross_origin(supports_credentials=True)
 @jwt_required()
-def update_preference(email, anime_id, choice):
+def update_preference():
+    email = request.json['email']
+    anime_id = request.json['anime_id']
+    choice = request.json['choice']
     print(choice)
     user = User.query.filter_by(email=email).first()
     if user:
