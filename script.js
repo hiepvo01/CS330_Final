@@ -30,6 +30,7 @@ var select = new Vue({
             }
         },
         async filter_data(){
+            document.getElementById('query-title').innerHTML = "Filter Result"
             let genresCode = '';
             for (g of select.selectedGenres) {
                 genresCode += select.genres.indexOf(g) + 1 + ','
@@ -57,6 +58,8 @@ var select = new Vue({
             for (key in clean_submit) {
                 animes_url = animes_url + key + "=" + clean_submit[key] + "&" 
             }
+
+            localStorage.setItem('search', '')
             
             animes_url += 'order_by=score'
             let res = '';
@@ -64,13 +67,18 @@ var select = new Vue({
                 res = await fetch(animes_url)
                     .then(response => response.json())
                 grid.animes = res.results;
-                console.log(grid.animes)
             } catch(error) {
                 res= 'No animes found with this filter'
             }
         }
     },
 });
+
+async function Search(){
+    s = document.getElementById('search')
+    location.href = 'index.html';
+    localStorage.setItem('search', s.value)
+}
 
 function ckChange(ckType){
     var ckName = document.getElementsByName(ckType.name);
@@ -109,11 +117,44 @@ function watch(ckType){
 }
 
 window.onload = async function(){
+    if (localStorage.getItem('search') == null) {
+        localStorage.setItem('search', '')
+    }
+    if (grid.animes.length > 0) {
+    } else {
+        let animes_url = 'https://api.jikan.moe/v3/top/anime/1/tv'
+        res = await fetch(animes_url).then(response => response.json());
+        grid.animes = res.top;
+        document.getElementById('query-title').innerHTML = "Top Anime"
+    }
     res = await fetch('https://hiepvo01.pythonanywhere.com/genres').then(response => response.json());
     select.genres = res.genres;  
     year = []
-    for (i = 2000; i < parseInt(d.getFullYear()); i++) {
+    for (i = 2000; i <= parseInt(d.getFullYear()); i++) {
         year.push(i)
       }
     select.years = year;
+
+    if (localStorage.getItem('search') != '') {
+        console.log('therer')
+        document.getElementById('query-title').innerHTML = "Search Results for " + localStorage.getItem('search')
+        let animes_url = 'https://api.jikan.moe/v3/search/anime?q=' + localStorage.getItem('search')
+        res = await fetch(animes_url).then(response => response.json());
+        grid.animes = res.results;
+    }
+
+    var user = new XMLHttpRequest();
+    user.onreadystatechange= function () {
+        if (user.readyState==4) {
+            //handle response
+            if(user.status==401) {
+                location.href="user/login.html"
+            }
+        }
+        if (user.readyState == XMLHttpRequest.DONE) {
+            localStorage.setItem('watching', JSON.parse(user.responseText)["watching"])
+            localStorage.setItem('watcher', JSON.parse(user.responseText)["watched"])
+            localStorage.setItem('like', JSON.parse(user.responseText)["like"])
+        }
+    }
 }

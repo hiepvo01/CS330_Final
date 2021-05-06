@@ -108,3 +108,15 @@ a.btn{
     margin: 0 auto;
     text-align:center
 }
+
+@media(min-width:1100px) and (max-width: 1200px) {
+  #filter-grid .col-2 {
+    width: 30%;
+  }
+}
+
+@media(max-width:1100px)  {
+  #filter-grid .col-2 {
+    width: 45%;
+  }
+ }

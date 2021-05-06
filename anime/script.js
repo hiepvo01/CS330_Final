@@ -12,9 +12,11 @@ async function display() {
     console.log("Testing")
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    console.log(urlParams.get('id'))
+    if(urlParams.get('id')) {
+        localStorage.setItem('anime_id', urlParams.get('id'))
+    }
     let res = '';
-    res = await fetch(`https://api.jikan.moe/v3/anime/` + urlParams.get('id'))
+    res = await fetch(`https://api.jikan.moe/v3/anime/` + localStorage.getItem('anime_id'))
         .then(response => response.json())
     anime_data.anime = res;
     for (genre of res.genres) {
@@ -74,7 +76,79 @@ function openCity(evt, cityName) {
     evt.currentTarget.className += " active";
   }
 
+async function Search(){
+    s = document.getElementById('search')
+    localStorage.setItem('search', s.value)
+    window.location.replace("../index.html");
+}
+
+var user = new XMLHttpRequest();
+    user.onreadystatechange= function () {
+        if (user.readyState==4) {
+            //handle response
+            if(user.status==401) {
+                alert("Session Timeout! Please log in again");
+                location.href="../user/login.html"
+            } else {
+                console.log(user.responseText)
+            }
+        }
+        if (user.readyState == XMLHttpRequest.DONE) {
+            localStorage.setItem('watching', JSON.parse(user.responseText)["watching"])
+            localStorage.setItem('watched', JSON.parse(user.responseText)["watched"])
+            localStorage.setItem('like', JSON.parse(user.responseText)["like"])
+        }
+    }
+
+function updateUser(key) {    
+    var method = document.getElementById(key.id).value;
+    let updateUrl = 'https://hiepvo01.pythonanywhere.com/update_preference/'+localStorage.getItem('email')+'/'+localStorage.getItem('anime_id')+'/'+method 
+    user.open("PUT", updateUrl, true);
+    user.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
+    user.setRequestHeader("Accept","text/plain");
+    user.setRequestHeader("Access-Control-Allow-Origin","*");
+    
+    user.send()
+}
+
 window.onload= async function() {
     display()
     document.getElementById("description").click();
+    if(localStorage.getItem('access_token')) {
+        user.open("GET", "https://hiepvo01.pythonanywhere.com/user/" + localStorage.getItem('email'), true);
+        user.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
+        user.setRequestHeader("Accept","text/plain");
+        user.send()
+
+        watching = document.createElement('button')
+        watching.innerHTML = "Watching"
+        watching.classList.add('btn')
+        watching.classList.add('btn-success')
+        watching.setAttribute('id','watching');
+        watching.setAttribute('type','button');
+        watching.setAttribute('onclick','updateUser(this)');
+        watching.classList.add('col-4')
+        row = document.getElementById('img-row')
+        row.appendChild(watching)
+
+        watched = document.createElement('button')
+        watched.innerHTML = "Watched"
+        watched.classList.add('btn')
+        watched.setAttribute('id','watched');
+        watched.setAttribute('type','button');
+        watched.setAttribute('onclick','updateUser(this)');
+        watched.classList.add('btn-info')
+        watched.classList.add('col-4')
+        row.appendChild(watched)
+
+        like = document.createElement('button')
+        like.innerHTML = "Like"
+        like.classList.add('btn')
+        like.setAttribute('id','like');
+        like.setAttribute('onclick','updateUser(this)');
+        like.setAttribute('type','button');
+        like.classList.add('btn-warning')
+        like.classList.add('col-4')
+        row.appendChild(like)     
+    }
 }
