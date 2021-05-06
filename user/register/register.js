@@ -38,7 +38,7 @@ async function register(){
     }
 
     
-    request.open("POST", "http://127.0.0.1:5000/register");
+    request.open("POST", "https://hiepvo01.pythonanywhere.com/register");
     request.send(FD);
 
 }
