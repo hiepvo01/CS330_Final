@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from flask import jsonify, request, Response
 from config import app, db, user_schema, users_schema, User
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS, cross_origin, config, EnableCors
 import datetime
 import json
 from sqlalchemy.sql import func
@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 
 CORS(app)
+
 GENRE_URL = "https://myanimelist.net/anime.php"
 
 @app.route('/')
@@ -70,12 +71,12 @@ def update_preference(email, anime_id, choice):
         db.session.commit()
         print(user.watched)
         res = Response(json.dumps({"message": "You updated your preference", 'watching': user.watching, 'watched':user.watched, 'like':user.like})) 
-        res.headers["Access-Control-Allow-Origin"] = "*"
+        
         res.headers["Content-Type"] = "application/json"
         return res
     else:
         res = Response(json.dumps({"message": "That user does not exist"}))
-        res.headers["Access-Control-Allow-Origin"] = "*"
+        
         res.headers["Content-Type"] = "application/json"
         return res
 
@@ -95,7 +96,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         res = Response(json.dumps({"message": "User Created Successfully"}))
-        res.headers["Access-Control-Allow-Origin"] = "*"
+        
         res.headers["Content-Type"] = "application/json"
         return res
 
@@ -112,12 +113,12 @@ def login():
     if test:
         access_token = create_access_token(identity=email)
         res = Response(json.dumps({"message": "Login Successful", "access_token": access_token}))
-        res.headers["Access-Control-Allow-Origin"] = "*"
+        
         res.headers["Content-Type"] = "application/json"
         return res
     else:
         res = Response(json.dumps({"message": "Bad Email or Password"}))
-        res.headers["Access-Control-Allow-Origin"] = "*"
+        
         res.headers["Content-Type"] = "application/json"
         return res
 
@@ -138,7 +139,7 @@ def genres():
         genres.append(g)
     genres.sort()
     res = Response(json.dumps({"genres": genres}))
-    res.headers["Access-Control-Allow-Origin"] = "*"
+    
     res.headers["Content-Type"] = "application/json"
     return res
 
