@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from flask import jsonify, request, Response
 from config import app, db, user_schema, users_schema, User
-from flask_cors import CORS, cross_origin, config, EnableCors
+from flask_cors import CORS, cross_origin
 import datetime
 import json
 from sqlalchemy.sql import func
