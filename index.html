@@ -126,7 +126,7 @@
               <div v-for="a in animes" class="col-2">
                   <div class="card card-dark">
                       <div class="card-body">
-                        <img :src="a.image_url" class='image' width="100%" height="180">
+                        <img :src="a.images.jpg.image_url" class='image' width="100%" height="180">
                         <div class="middle">
                           <button class="btn btn-primary" :id="a.mal_id" onClick="watch(this)">Watch</button>
                         </div>

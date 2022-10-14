@@ -54,7 +54,7 @@ var select = new Vue({
                 clean_submit['start_date'] = select.selectedYear.toString() + "-01-01"
             }
             console.log(clean_submit)
-            let animes_url = 'https://api.jikan.moe/v3/search/anime?'
+            let animes_url = 'https://api.jikan.moe/v4/anime?'
             for (key in clean_submit) {
                 animes_url = animes_url + key + "=" + clean_submit[key] + "&" 
             }
@@ -66,7 +66,7 @@ var select = new Vue({
             try {
                 res = await fetch(animes_url)
                     .then(response => response.json())
-                grid.animes = res.results;
+                grid.animes = res.data;
             } catch(error) {
                 res= 'No animes found with this filter'
             }
@@ -122,12 +122,12 @@ window.onload = async function(){
     }
     if (grid.animes.length > 0) {
     } else {
-        let animes_url = 'https://api.jikan.moe/v3/top/anime/1/tv'
+        let animes_url = 'https://api.jikan.moe/v4/top/anime'
         res = await fetch(animes_url).then(response => response.json());
-        grid.animes = res.top;
+        grid.animes = res.data;
         document.getElementById('query-title').innerHTML = "Top Anime"
     }
-    res = await fetch('https://hiepvo01.pythonanywhere.com/genres').then(response => response.json());
+    res = await fetch('http://127.0.0.1:5000/genres').then(response => response.json());
     select.genres = res.genres;  
     year = []
     for (i = 2000; i <= parseInt(d.getFullYear()); i++) {
@@ -138,9 +138,9 @@ window.onload = async function(){
     if (localStorage.getItem('search') != '') {
         console.log('therer')
         document.getElementById('query-title').innerHTML = "Search Results for " + localStorage.getItem('search')
-        let animes_url = 'https://api.jikan.moe/v3/search/anime?q=' + localStorage.getItem('search')
+        let animes_url = 'https://api.jikan.moe/v4/anime?q=' + localStorage.getItem('search')
         res = await fetch(animes_url).then(response => response.json());
-        grid.animes = res.results;
+        grid.animes = res.data;
     }
 
     var user = new XMLHttpRequest();

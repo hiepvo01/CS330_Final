@@ -8,9 +8,11 @@ from sqlalchemy.sql import func
 import requests
 from bs4 import BeautifulSoup
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
+from urllib.request import urlopen
+
 
 CORS(app, support_credentials=True)
-GENRE_URL = "https://myanimelist.net/anime.php"
+GENRE_URL = "https://api.jikan.moe/v4/genres/anime"
 
 @app.route('/')
 @cross_origin(supports_credentials=True)
@@ -127,17 +129,11 @@ def login():
 @cross_origin(supports_credentials=True)
 def genres():
     genres = []
-    resp = requests.get(GENRE_URL)
-    if resp.status_code ==200:
-        raw_html = resp.text
-    else:
-        raise ValueError("Could not Retrieve valid HTML")
-
-    html = BeautifulSoup(raw_html, 'html.parser')
-    for item in html.select('table.space_table tr td'):
-        g = item.text
-        g = g.replace('\n', '')
-        genres.append(g)
+    resp = urlopen(GENRE_URL)
+    all = json.loads(resp.read())
+    for anime in all['data']:
+        genres.append(anime['name'])
+    
     genres.sort()
     res = Response(json.dumps({"genres": genres}))
     

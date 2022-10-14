@@ -4,7 +4,8 @@ const anime_data = new Vue({
     el: "#descriptions",
     data: {
         anime: [],
-        genres: ''
+        genres: '',
+        image_url:'',
     }
 });
 
@@ -15,13 +16,16 @@ async function display() {
         localStorage.setItem('anime_id', urlParams.get('id'))
     }
     let res = '';
-    res = await fetch(`https://api.jikan.moe/v3/anime/` + localStorage.getItem('anime_id'))
+    res = await fetch(`https://api.jikan.moe/v4/anime/` + localStorage.getItem('anime_id'))
         .then(response => response.json())
-    anime_data.anime = res;
-    for (genre of res.genres) {
+
+    anime_data.anime = res.data;
+    for (genre of res.data.genres) {
         anime_data.genres = anime_data.genres + genre.name + ', '
     }
     anime_data.genres=anime_data.genres.substr(0, anime_data.genres.length-2)
+    anime_data.image_url = anime_data.anime.images.jpg.image_url
+    console.log(anime_data.image_url)
 
     stars = document.getElementsByClassName('fa fa-star')
     for (let i=0; i<anime_data.anime.score/2-1; i++) {
@@ -38,7 +42,7 @@ async function display() {
         button.innerText = e
         button.style.margin = 2
         button.onclick = async function() {
-            let url = 'https://hiepvo01.pythonanywhere.com/episodes'
+            let url = 'http://127.0.0.1:5000/episodes'
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == XMLHttpRequest.DONE) {
@@ -98,7 +102,7 @@ var user = new XMLHttpRequest();
 
 function updateUser(key) {    
     var method = key.id;
-    let updateUrl = 'https://hiepvo01.pythonanywhere.com/update_preference'
+    let updateUrl = 'http://127.0.0.1:5000/update_preference'
     user.open("POST", updateUrl, true);
     user.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
     user.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -110,7 +114,7 @@ window.onload= async function() {
     display()
     document.getElementById("description").click();
     if(localStorage.getItem('access_token')) {
-        user.open("GET", "https://hiepvo01.pythonanywhere.com/user/" + localStorage.getItem('email'), true);
+        user.open("GET", "http://127.0.0.1:5000/user/" + localStorage.getItem('email'), true);
         user.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
         user.setRequestHeader("Accept","text/plain");
         user.send()
