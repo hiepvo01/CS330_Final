@@ -127,7 +127,7 @@ window.onload = async function(){
         grid.animes = res.data;
         document.getElementById('query-title').innerHTML = "Top Anime"
     }
-    res = await fetch('http://127.0.0.1:5000/genres').then(response => response.json());
+    res = await fetch('https://animeweb-ue53.onrender.com/genres').then(response => response.json());
     select.genres = res.genres;  
     year = []
     for (i = 2000; i <= parseInt(d.getFullYear()); i++) {

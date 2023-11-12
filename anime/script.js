@@ -42,7 +42,7 @@ async function display() {
         button.innerText = e
         button.style.margin = 2
         button.onclick = async function() {
-            let url = 'http://127.0.0.1:5000/episodes'
+            let url = 'https://animeweb-ue53.onrender.com/episodes'
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == XMLHttpRequest.DONE) {
@@ -102,7 +102,7 @@ var user = new XMLHttpRequest();
 
 function updateUser(key) {    
     var method = key.id;
-    let updateUrl = 'http://127.0.0.1:5000/update_preference'
+    let updateUrl = 'https://animeweb-ue53.onrender.com/update_preference'
     user.open("POST", updateUrl, true);
     user.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
     user.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -114,7 +114,7 @@ window.onload= async function() {
     display()
     document.getElementById("description").click();
     if(localStorage.getItem('access_token')) {
-        user.open("GET", "http://127.0.0.1:5000/user/" + localStorage.getItem('email'), true);
+        user.open("GET", "https://animeweb-ue53.onrender.com/user/" + localStorage.getItem('email'), true);
         user.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
         user.setRequestHeader("Accept","text/plain");
         user.send()
